@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  elasticsearch:
+    image: 'elasticsearch:6.5.1'
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: 'kibana:6.5.1'
+    ports:
+      - 5601:5601
+
+  rabbitmq:
+    image: 'rabbitmq:3.7.8-management'
+    ports:
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+      - RABBITMQ_DEFAULT_VHOST=flatrise
+
+  leboncoin:
+    build:
+      context: .
+      dockerfile: ./leboncoin/Dockerfile
+    volumes:
+      - ./:/usr/src/app
+    depends_on:
+      - rabbitmq
+    command: './docker/wait-for-it.sh rabbitmq:5672 -- ./leboncoin/crawler.py'
+
+  storage:
+    build:
+      context: .
+      dockerfile: ./storage/Dockerfile
+    volumes:
+      - ./:/usr/src/app
+    depends_on:
+      - rabbitmq
+      - elasticsearch
+    command: './docker/wait-for-it.sh rabbitmq:5672 -- ./docker/wait-for-it.sh elasticsearch:9200  -- ./storage/worker.py'
+
+volumes:
+  es_data:
+    driver: local
