@@ -11,6 +11,14 @@ services:
     volumes:
       - es_data:/usr/share/elasticsearch/data
 
+  logstash:
+    image: 'logstash:6.5.1'
+    depends_on:
+      - rabbitmq
+      - elasticsearch
+    volumes:
+      - ./logstash:/usr/share/logstash/pipeline/
+
   kibana:
     image: 'kibana:6.5.1'
     ports:
@@ -34,17 +42,6 @@ services:
     depends_on:
       - rabbitmq
     command: './docker/wait-for-it.sh rabbitmq:5672 -- ./leboncoin/crawler.py'
-
-  storage:
-    build:
-      context: .
-      dockerfile: ./storage/Dockerfile
-    volumes:
-      - ./:/usr/src/app
-    depends_on:
-      - rabbitmq
-      - elasticsearch
-    command: './docker/wait-for-it.sh rabbitmq:5672 -- ./docker/wait-for-it.sh elasticsearch:9200  -- ./storage/worker.py'
 
 volumes:
   es_data:
