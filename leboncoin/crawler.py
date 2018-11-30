@@ -35,7 +35,7 @@ class Crawler:
             return default
 
     def _query(self):
-        request_payload = '{"limit":35,"limit_alu":3,"filters":{"category":{"id":"10"},"enums":{"real_estate_type":["2"],"ad_type":["offer"]},"location":{"city_zipcodes":[{"city":"Lyon","label":"Lyon (69003)","zipcode":"69003"},{"city":"Lyon","label":"Lyon (69007)","zipcode":"69007"}],"regions":["22"]},"ranges":{"square":{"min":50},"rooms":{"min":3}}}}'
+        request_payload = '{"limit":35,"limit_alu":3,"filters":{"category":{"id":"10"},"enums":{"real_estate_type":["2"],"ad_type":["offer"]},"location":{"city_zipcodes":[{"city":"Lyon","label":"Lyon (69003)","zipcode":"69003"},{"city":"Lyon","label":"Lyon (69007)","zipcode":"69007"}],"regions":["22"]}}}'
         headers = {"Content-type": "application/json", "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0", "api_key": self.API_KEY}
 
         conn = http.client.HTTPSConnection(self.API_HOST)
@@ -54,7 +54,7 @@ channel = rabbitmq.channel()
 channel.queue_declare(queue='offers')
 
 for offer in crawler.offers():
-    print(offer)
+    print(offer['title'], ' -- ', offer['identifier'])
     channel.basic_publish(exchange='', routing_key='offers', body=json.dumps(offer))
 
 rabbitmq.close()
