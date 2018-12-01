@@ -51,7 +51,7 @@ class Crawler:
 crawler = Crawler()
 rabbitmq = pika.BlockingConnection(pika.URLParameters('amqp://admin:admin@rabbitmq/flatrise'))
 channel = rabbitmq.channel()
-channel.queue_declare(queue='offers')
+channel.queue_declare(queue='offers', durable=True)
 
 for offer in crawler.offers():
     print(offer['title'], ' -- ', offer['identifier'])
