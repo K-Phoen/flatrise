@@ -33,6 +33,14 @@ services:
       - RABBITMQ_DEFAULT_PASS=admin
       - RABBITMQ_DEFAULT_VHOST=flatrise
 
+  boligportal:
+    build:
+      context: .
+      dockerfile: ./boligportal.dk/Dockerfile
+    depends_on:
+      - rabbitmq
+    command: './docker/wait-for-it.sh rabbitmq:5672 -- /go/bin/boligportal.dk'
+
   leboncoin:
     build:
       context: .
