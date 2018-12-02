@@ -6,6 +6,7 @@ import (
   "io/ioutil"
   "log"
   "net/http"
+  "os"
   "time"
 
   "github.com/streadway/amqp"
@@ -61,8 +62,6 @@ func Crawl(url string) (offers []Offer, err error) {
       Location: Location { Lat: offerData["lat"].(float64), Lon: offerData["lng"].(float64) },
     }
 
-    fmt.Printf("%s - %s\n", offer.Title, offer.Identifier)
-
     offers = append(offers, offer)
   }
 
@@ -70,7 +69,12 @@ func Crawl(url string) (offers []Offer, err error) {
 }
 
 func main() {
-  rabbitConn, err := amqp.Dial("amqp://admin:admin@rabbitmq/flatrise")
+  rabbitMqUrl, ok := os.LookupEnv("RABBITMQ_URL")
+  if !ok {
+    log.Fatal("The DSN to use to connect to RabbitMq must be specified by the RABBITMQ_URL environment variable.")
+  }
+
+  rabbitConn, err := amqp.Dial(rabbitMqUrl)
   if err != nil {
     log.Fatalf("Could not connect to RabbitMq: %s", err)
 	}
@@ -104,6 +108,8 @@ func main() {
     if err != nil {
       log.Fatalf("Could not marshal offer: %s", err)
     }
+
+    fmt.Printf("%s -- %s\n", offer.Title, offer.Identifier)
 
     err = channel.Publish(
       "",     // exchange
