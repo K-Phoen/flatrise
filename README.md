@@ -13,4 +13,4 @@ RabbitMq instance, which will be relayed into a Kibana instance through
 Logstash.
 
 Please keep in mind that this really is a quick and dirty project, more intended
-to help me than to be production-ready.
+to help me look for a flat and play with cool stuff than to be production-ready.
