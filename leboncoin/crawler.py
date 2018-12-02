@@ -2,7 +2,9 @@
 
 import http.client
 import json
+import os
 import pika
+import sys
 
 class Crawler:
     API_HOST = 'api.leboncoin.fr'
@@ -48,13 +50,21 @@ class Crawler:
         return json.loads(response.read().decode('utf-8'))
 
 
-crawler = Crawler()
-rabbitmq = pika.BlockingConnection(pika.URLParameters('amqp://admin:admin@rabbitmq/flatrise'))
-channel = rabbitmq.channel()
-channel.queue_declare(queue='offers', durable=True)
+if __name__ == '__main__':
+    rabbitMqUrl = os.environ.get('RABBITMQ_URL')
 
-for offer in crawler.offers():
-    print(offer['title'], ' -- ', offer['identifier'])
-    channel.basic_publish(exchange='', routing_key='offers', body=json.dumps(offer))
+    if rabbitMqUrl is None:
+        print("The DSN to use to connect to RabbitMq must be specified by the RABBITMQ_URL environment variable.", file=sys.stderr)
+        sys.exit(1)
 
-rabbitmq.close()
+
+    crawler = Crawler()
+    rabbitmq = pika.BlockingConnection(pika.URLParameters(rabbitMqUrl))
+    channel = rabbitmq.channel()
+    channel.queue_declare(queue='offers', durable=True)
+
+    for offer in crawler.offers():
+        print(offer['title'], ' -- ', offer['identifier'])
+        channel.basic_publish(exchange='', routing_key='offers', body=json.dumps(offer))
+
+    rabbitmq.close()

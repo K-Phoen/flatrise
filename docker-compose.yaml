@@ -51,6 +51,8 @@ services:
       - ./:/usr/src/app
     depends_on:
       - rabbitmq
+    environment:
+      - RABBITMQ_URL=amqp://admin:admin@rabbitmq/flatrise
     command: './docker/wait-for-it.sh rabbitmq:5672 -- ./leboncoin/crawler.py'
 
 volumes:
