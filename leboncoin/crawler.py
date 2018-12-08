@@ -2,9 +2,6 @@
 
 import http.client
 import json
-import os
-import pika
-import sys
 
 class Crawler:
     API_HOST = 'api.leboncoin.fr'
@@ -37,7 +34,7 @@ class Crawler:
             return default
 
     def _query(self):
-        request_payload = '{"limit":35,"limit_alu":3,"filters":{"category":{"id":"10"},"enums":{"real_estate_type":["2"],"ad_type":["offer"]},"location":{"city_zipcodes":[{"city":"Lyon","label":"Lyon (69003)","zipcode":"69003"},{"city":"Lyon","label":"Lyon (69007)","zipcode":"69007"}],"regions":["22"]}}}'
+        request_payload = '{"limit":35,"limit_alu":3,"filters":{"category":{"id":"10"},"enums":{"real_estate_type":["2"],"ad_type":["offer"]},"location":{"city_zipcodes":[{"city":"Lyon","label":"Lyon (toute la ville)","departement_id":69, "locationType": "city"}],"regions":["22"]}}}'
         headers = {"Content-type": "application/json", "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0", "api_key": self.API_KEY}
 
         conn = http.client.HTTPSConnection(self.API_HOST)
@@ -48,23 +45,3 @@ class Crawler:
             raise Exception('Error while calling the API')
 
         return json.loads(response.read().decode('utf-8'))
-
-
-if __name__ == '__main__':
-    rabbitMqUrl = os.environ.get('RABBITMQ_URL')
-
-    if rabbitMqUrl is None:
-        print("The DSN to use to connect to RabbitMq must be specified by the RABBITMQ_URL environment variable.", file=sys.stderr)
-        sys.exit(1)
-
-
-    crawler = Crawler()
-    rabbitmq = pika.BlockingConnection(pika.URLParameters(rabbitMqUrl))
-    channel = rabbitmq.channel()
-    channel.queue_declare(queue='offers', durable=True)
-
-    for offer in crawler.offers():
-        print(offer['title'], ' -- ', offer['identifier'])
-        channel.basic_publish(exchange='', routing_key='offers', body=json.dumps(offer))
-
-    rabbitmq.close()
