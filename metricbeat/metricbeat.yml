@@ -1,0 +1,17 @@
+logging.level: debug
+
+output.elasticsearch:
+  hosts: ['http://elasticsearch:9200']
+  index: 'metricbeat-%{+yyyy.MM.dd}'
+
+setup.kibana.host: 'http://kibana:5601'
+setup.dashboards.enabled: true
+setup.dashboards.retry.enabled: true
+setup.dashboards.retry.maximum: 10
+setup.dashboards.index: 'metricbeat-*'
+
+setup.template:
+  name: 'metricbeat'
+  pattern: 'metricbeat-*'
+
+metricbeat.config.modules.path: /usr/share/metricbeat/modules.d/*.yml

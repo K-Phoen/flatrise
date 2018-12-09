@@ -53,6 +53,23 @@ services:
       - RABBITMQ_URL=amqp://admin:admin@rabbitmq/flatrise
     command: './docker/wait-for-it.sh -t 60 rabbitmq:5672 -- ./leboncoin/worker.py'
 
+  metricbeat:
+    build:
+      context: .
+      dockerfile: ./metricbeat/Dockerfile
+    volumes:
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./metricbeat/modules.d:/usr/share/metricbeat/modules.d
+    depends_on:
+      - elasticsearch
+      - rabbitmq
+      - logstash
+    command:
+      - '-system.hostfs=/hostfs'
+
 volumes:
   es_data:
     driver: local

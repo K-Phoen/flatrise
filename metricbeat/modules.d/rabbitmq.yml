@@ -1,0 +1,7 @@
+- module: rabbitmq
+  metricsets: ['node', 'queue', 'connection']
+  enabled: true
+  period: 10s
+  hosts: ['rabbitmq:15672']
+  username: admin
+  password: admin
