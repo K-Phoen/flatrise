@@ -7,6 +7,7 @@ import sys
 REQUESTS_QUEUES = {
     'leboncoin': 'leboncoin_searchs',
     'boligportal': 'boligportal_searchs',
+    'blocket': 'blocket_searchs',
 }
 
 if __name__ == '__main__':
