@@ -2,6 +2,7 @@
 
 import crawler
 import json
+import logging
 import os
 import pika
 import sys
@@ -13,17 +14,18 @@ def search_leboncoin(rabbit_channel):
     leboncoin = crawler.Crawler()
 
     for offer in leboncoin.offers():
-        print(offer['title'], ' -- ', offer['identifier'])
+        logging.info('Found offer "%s" -- %s', offer['title'], offer['identifier'])
         rabbit_channel.basic_publish(exchange='', routing_key=OFFERS_QUEUE, body=json.dumps(offer), properties=pika.BasicProperties(
             delivery_mode = 2, # make message persistent
         ))
 
 def search_request_received(channel, method, properties, body):
-    print('Received search request!')
+    logging.info('Received search request!')
 
     search_leboncoin(channel)
 
 if __name__ == '__main__':
+    logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
     rabbitMqUrl = os.environ.get('RABBITMQ_URL')
 
     if rabbitMqUrl is None:
@@ -35,7 +37,7 @@ if __name__ == '__main__':
     channel.queue_declare(queue=OFFERS_QUEUE, durable=True)
     channel.queue_declare(queue=LEBONCOIN_SEARCHS_QUEUE, durable=True)
 
-    print('Waiting for search requests…')
+    logging.info('Waiting for search requests…')
     channel.basic_consume(search_request_received, queue=LEBONCOIN_SEARCHS_QUEUE)
 
     try:

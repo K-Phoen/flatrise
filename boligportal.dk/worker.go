@@ -2,10 +2,9 @@ package main
 
 import (
   "encoding/json"
-  "fmt"
-  "log"
   "os"
 
+  log "github.com/sirupsen/logrus"
   "github.com/streadway/amqp"
 )
 
@@ -24,7 +23,7 @@ func crawlOffers(channel *amqp.Channel) {
       log.Fatalf("Could not marshal offer: %s", err)
     }
 
-    fmt.Printf("%s -- %s\n", offer.Title, offer.Identifier)
+    log.Infof("Found ofer \"%s\" -- %s\n", offer.Title, offer.Identifier)
 
     err = channel.Publish(
       "",     // exchange
@@ -107,6 +106,6 @@ func main() {
     }
   }()
 
-  log.Printf("[*] Waiting for search requests. To exit press CTRL+C")
+  log.Printf("Waiting for search requests. To exit press CTRL+C")
   <-forever
 }
