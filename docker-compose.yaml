@@ -82,17 +82,11 @@ services:
       context: .
       dockerfile: ./metricbeat/Dockerfile
     volumes:
-      - /proc:/hostfs/proc:ro
-      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
-      - /:/hostfs:ro
-      - /var/run/docker.sock:/var/run/docker.sock
       - ./metricbeat/modules.d:/usr/share/metricbeat/modules.d
     depends_on:
       - elasticsearch
       - rabbitmq
       - logstash
-    command:
-      - '-system.hostfs=/hostfs'
 
 volumes:
   es_data:
