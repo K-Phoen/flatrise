@@ -4,13 +4,19 @@ from bs4 import BeautifulSoup
 import http.client
 import json
 
+class LocationNotFound(Exception):
+    pass
+
 class Crawler:
     API_HOST = 'www.blocket.se'
     API_LIST_URL = '/karta/items?ca=11&ca=11&st=s&cg=3020&sort=&ps=&pe=&ss=&se=&ros=&roe=&mre=&q=&is=1&f=b&w=3&ac=0MNXXY7CTORXWG23IN5WG2000&zl=12&ne=59.39389826993069%2C18.441925048828125&sw=59.2802650449542%2C17.865142822265625'
 
     def offers(self):
         for offer_data in self._query_offers():
-            yield self._query_offer_details(offer_data)
+            try:
+                yield self._query_offer_details(offer_data)
+            except LocationNotFound:
+                pass
 
     def _query_offer_details(self, offer_data):
         offer_id = 'https://www.blocket.se/stockholm/seo-friendly-slug_%s.htm' % offer_data['identifier']
@@ -22,7 +28,7 @@ class Crawler:
         map_links = soup.find_all(id='hitta-map-broker')
 
         if len(map_links) == 0:
-            raise Exception('No map link found')
+            raise LocationNotFound('No map link found')
 
         map_link = map_links[0]['src']
         lat, lng = map_link.split('/')[7].split('?')[0].split(':')
