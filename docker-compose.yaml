@@ -65,6 +65,18 @@ services:
       - RABBITMQ_URL=amqp://admin:admin@rabbitmq/flatrise
     command: './docker/wait-for-it.sh -t 60 rabbitmq:5672 -- ./blocket.se/worker.py'
 
+  scheduler:
+    build:
+      context: .
+      dockerfile: ./scheduler/Dockerfile
+    volumes:
+      - ./:/usr/src/app
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_URL=amqp://admin:admin@rabbitmq/flatrise
+    command: './docker/wait-for-it.sh -t 60 rabbitmq:5672 -- ./scheduler/cron.py'
+
   metricbeat:
     build:
       context: .
