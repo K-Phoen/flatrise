@@ -8,6 +8,17 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     volumes:
       - es_data:/usr/share/elasticsearch/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role != manager]
+      resources:
+        limits:
+          cpus: '0.95'
+          memory: 1800M
+        reservations:
+          cpus: '0.25'
+          memory: 1200M
 
   logstash:
     image: 'logstash:6.5.1'
@@ -18,11 +29,29 @@ services:
       - elasticsearch
     volumes:
       - ./logstash:/usr/share/logstash/pipeline/
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role != manager]
+      resources:
+        limits:
+          cpus: '0.95'
+          memory: 1000M
+        reservations:
+          cpus: '0.25'
+          memory: 700M
 
   kibana:
     image: 'kibana:6.5.1'
     ports:
       - 80:5601
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 500M
+        reservations:
+          memory: 100M
 
   rabbitmq:
     image: 'rabbitmq:3.7.8-management'
@@ -30,8 +59,16 @@ services:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
       - RABBITMQ_DEFAULT_VHOST=flatrise
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 500M
+        reservations:
+          memory: 200M
 
   boligportal:
+    image: kphoen/flatrise-boligportal
     build:
       context: .
       dockerfile: ./boligportal.dk/Dockerfile
@@ -42,6 +79,7 @@ services:
     command: '/docker/wait-for-it.sh -t 60 rabbitmq:5672 -- /app/worker'
 
   leboncoin:
+    image: kphoen/flatrise-leboncoin
     build:
       context: .
       dockerfile: ./leboncoin/Dockerfile
@@ -54,6 +92,7 @@ services:
     command: './docker/wait-for-it.sh -t 60 rabbitmq:5672 -- ./leboncoin/worker.py'
 
   blocket:
+    image: kphoen/flatrise-blocket
     build:
       context: .
       dockerfile: ./blocket.se/Dockerfile
@@ -66,6 +105,7 @@ services:
     command: './docker/wait-for-it.sh -t 60 rabbitmq:5672 -- ./blocket.se/worker.py'
 
   scheduler:
+    image: kphoen/flatrise-scheduler
     build:
       context: .
       dockerfile: ./scheduler/Dockerfile
@@ -78,6 +118,7 @@ services:
     command: './docker/wait-for-it.sh -t 60 rabbitmq:5672 -- ./scheduler/cron.py'
 
   metricbeat:
+    image: kphoen/flatrise-metricbeat
     build:
       context: .
       dockerfile: ./metricbeat/Dockerfile
@@ -87,6 +128,16 @@ services:
       - elasticsearch
       - rabbitmq
       - logstash
+
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
 
 volumes:
   es_data:
