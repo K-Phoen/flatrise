@@ -1,1 +1,7 @@
 /*/__pycache__/
+
+/.cloud/terraform/.terraform/
+# generated state
+/.cloud/terraform/*.tfstate*
+# "private" variables (mostly secrets)
+/.cloud/terraform/*.tfvars
