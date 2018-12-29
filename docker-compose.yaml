@@ -26,7 +26,7 @@ services:
       context: ./logstash
       dockerfile: ./Dockerfile
     environment:
-      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m -XX:ParallelGCThreads=1"
     depends_on:
       - rabbitmq
       - elasticsearch
