@@ -33,13 +33,13 @@ services:
 
   boligportal:
     build:
-      context: ./boligportal.dk/
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./boligportal.dk/Dockerfile
     depends_on:
       - rabbitmq
     environment:
       - RABBITMQ_URL=amqp://admin:admin@rabbitmq/flatrise
-    command: './docker/wait-for-it.sh -t 60 rabbitmq:5672 -- /app/worker'
+    command: '/docker/wait-for-it.sh -t 60 rabbitmq:5672 -- /app/worker'
 
   leboncoin:
     build:
