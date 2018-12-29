@@ -26,7 +26,7 @@ services:
       context: ./logstash
       dockerfile: ./Dockerfile
     environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
     depends_on:
       - rabbitmq
       - elasticsearch
@@ -37,7 +37,7 @@ services:
       resources:
         limits:
           cpus: '0.95'
-          memory: 1000M
+          memory: 1024M
         reservations:
           cpus: '0.25'
           memory: 700M
