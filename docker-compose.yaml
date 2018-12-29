@@ -21,14 +21,15 @@ services:
           memory: 1200M
 
   logstash:
-    image: 'logstash:6.5.1'
+    image: kphoen/flatrise-logstash
+    build:
+      context: ./logstash
+      dockerfile: ./Dockerfile
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     depends_on:
       - rabbitmq
       - elasticsearch
-    volumes:
-      - ./logstash:/usr/share/logstash/pipeline/
     deploy:
       replicas: 1
       placement:
@@ -83,8 +84,6 @@ services:
     build:
       context: .
       dockerfile: ./leboncoin/Dockerfile
-    volumes:
-      - ./:/usr/src/app
     depends_on:
       - rabbitmq
     environment:
@@ -96,8 +95,6 @@ services:
     build:
       context: .
       dockerfile: ./blocket.se/Dockerfile
-    volumes:
-      - ./:/usr/src/app
     depends_on:
       - rabbitmq
     environment:
@@ -109,8 +106,6 @@ services:
     build:
       context: .
       dockerfile: ./scheduler/Dockerfile
-    volumes:
-      - ./:/usr/src/app
     depends_on:
       - rabbitmq
     environment:
@@ -122,22 +117,10 @@ services:
     build:
       context: .
       dockerfile: ./metricbeat/Dockerfile
-    volumes:
-      - ./metricbeat/modules.d:/usr/share/metricbeat/modules.d
     depends_on:
       - elasticsearch
       - rabbitmq
       - logstash
-
-  visualizer:
-    image: dockersamples/visualizer:stable
-    ports:
-      - "8080:8080"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    deploy:
-      placement:
-        constraints: [node.role == manager]
 
 volumes:
   es_data:

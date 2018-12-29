@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  logstash:
+    volumes:
+      - ./logstash:/usr/share/logstash/pipeline/
+
+  leboncoin:
+    volumes:
+      - ./leboncoin:/usr/src/app/leboncoin
+
+  blocket:
+    volumes:
+      - ./:/usr/src/app
+
+  scheduler:
+    volumes:
+      - ./:/usr/src/app
+
+  metricbeat:
+    volumes:
+      - ./metricbeat/modules.d:/usr/share/metricbeat/modules.d
+
+volumes:
+  es_data:
+    driver: local

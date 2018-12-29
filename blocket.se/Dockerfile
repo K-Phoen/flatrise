@@ -4,3 +4,6 @@ WORKDIR /usr/src/app
 
 RUN pip install 'pika==0.12.0'
 RUN pip install 'beautifulsoup4==4.6.3'
+
+COPY ./docker /usr/src/app/docker/
+COPY ./blocket.se /usr/src/app/blocket.se/
