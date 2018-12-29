@@ -121,6 +121,8 @@ services:
       - elasticsearch
       - rabbitmq
       - logstash
+    deploy:
+      mode: global
 
 volumes:
   es_data:
