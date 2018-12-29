@@ -9,10 +9,6 @@ services:
     volumes:
       - ./leboncoin:/usr/src/app/leboncoin
 
-  blocket:
-    volumes:
-      - ./:/usr/src/app
-
   scheduler:
     volumes:
       - ./:/usr/src/app

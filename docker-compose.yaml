@@ -99,7 +99,7 @@ services:
       - rabbitmq
     environment:
       - RABBITMQ_URL=amqp://admin:admin@rabbitmq/flatrise
-    command: './docker/wait-for-it.sh -t 60 rabbitmq:5672 -- ./blocket.se/worker.py'
+    command: '/docker/wait-for-it.sh -t 60 rabbitmq:5672 -- /app/worker'
 
   scheduler:
     image: kphoen/flatrise-scheduler
