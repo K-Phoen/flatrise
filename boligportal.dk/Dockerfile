@@ -1,9 +1,9 @@
 FROM golang:1.11-stretch
 
-WORKDIR /go/src/app
+WORKDIR /app
+
 COPY . .
 
-RUN go get -d -v ./...
-RUN go install -v ./...
+RUN go build -v -o worker
 
-CMD ["/go/bin/boligportal.dk"]
+CMD ["/app/worker"]
