@@ -63,6 +63,10 @@ resource "aws_instance" "small_worker" {
     user = "ubuntu"
   }
 
+  root_block_device {
+    volume_size = 50
+  }
+
   # The name of our SSH keypair we created above.
   key_name = "${aws_key_pair.auth.id}"
 
