@@ -17,6 +17,8 @@ class Crawler:
                 'title': offer_data['subject'],
                 'description': offer_data['body'],
                 'price': offer_data['price'][0],
+                'currency': 'EUR',
+                'price_eur': offer_data['price'][0],
                 'location': {
                     'lat': offer_data['location']['lat'],
                     'lon': offer_data['location']['lng'],

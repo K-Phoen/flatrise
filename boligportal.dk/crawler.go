@@ -7,6 +7,9 @@ import (
 	"time"
 )
 
+// divide a DKK amount by this rate to get the price in euros
+const DKKToEuroRate = 7.46635
+
 type Location struct {
 	Lat float64 `json:"lat"`
 	Lon float64 `json:"lon"`
@@ -17,6 +20,8 @@ type Offer struct {
 	Title       string   `json:"title"`
 	Description string   `json:"description"`
 	Price       int      `json:"price"`
+	Currency    string   `json:"currency"`
+	PriceEur    int      `json:"price_eur"`
 	Area        int      `json:"area"`
 	Rooms       int      `json:"rooms"`
 	Location    Location `json:"location"`
@@ -47,11 +52,15 @@ func Crawl(url string) (offers []Offer, err error) {
 	for _, propertyData := range propertiesCollection {
 		offerData := propertyData.(map[string]interface{})
 
+		price := int(offerData["monthlyPrice"].(float64))
+
 		offer := Offer{
 			Identifier:  "https://www.boligportal.dk/en" + offerData["url"].(string),
 			Title:       offerData["title"].(string),
 			Description: offerData["description"].(string),
-			Price:       int(offerData["monthlyPrice"].(float64)),
+			Price:       price,
+			Currency:    "DKK",
+			PriceEur:    int(float64(price) / DKKToEuroRate),
 			Area:        int(offerData["sizeM2"].(float64)),
 			Rooms:       int(offerData["numRooms"].(float64)),
 			Location:    Location{Lat: offerData["lat"].(float64), Lon: offerData["lng"].(float64)},

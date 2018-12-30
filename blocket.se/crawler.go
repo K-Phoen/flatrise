@@ -14,6 +14,9 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
+// divide a SEK amount by this rate to get the price in euros
+const SEKToEuroRate = 10.2704
+
 type Location struct {
 	Lat float64 `json:"lat"`
 	Lon float64 `json:"lon"`
@@ -24,6 +27,8 @@ type Offer struct {
 	Title       string   `json:"title"`
 	Description string   `json:"description"`
 	Price       int      `json:"price"`
+	Currency    string   `json:"currency"`
+	PriceEur    int      `json:"price_eur"`
 	Area        int      `json:"area"`
 	Rooms       int      `json:"rooms"`
 	Location    Location `json:"location"`
@@ -99,11 +104,15 @@ func extractLocation(identifier string) Location {
 func buildOffer(offerData map[string]interface{}) Offer {
 	identifier := fmt.Sprintf("https://www.blocket.se/stockholm/seo-friendly-slug_%s.htm", offerData["id"].(string))
 
+	price := stringToInt(offerData["monthly_rent"].(string))
+
 	return Offer{
 		Identifier:  identifier,
 		Title:       offerData["address"].(string),
 		Description: "",
-		Price:       stringToInt(offerData["monthly_rent"].(string)),
+		Price:       price,
+		Currency:    "SEK",
+		PriceEur:    int(float64(price) / SEKToEuroRate),
 		Area:        stringToInt(offerData["sqm"].(string)),
 		Rooms:       stringToInt(offerData["rooms"].(string)),
 		Location:    extractLocation(identifier),
