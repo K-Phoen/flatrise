@@ -92,7 +92,7 @@ func extractLocation(identifier string) Location {
 
 	return Location{
 		Lat: stringToFloat(data[0]),
-		Lon: stringToFloat(data[0]),
+		Lon: stringToFloat(data[1]),
 	}
 }
 
