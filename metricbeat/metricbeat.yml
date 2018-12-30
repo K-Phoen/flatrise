@@ -15,3 +15,11 @@ setup.template:
   pattern: 'metricbeat-*'
 
 metricbeat.config.modules.path: /usr/share/metricbeat/modules.d/*.yml
+
+metricbeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+
+processors:
+  - add_cloud_metadata: ~
