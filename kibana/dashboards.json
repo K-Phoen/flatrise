@@ -1,0 +1,34 @@
+[
+  {
+    "_id": "4732d150-00c9-11e9-b21a-292c14b5ac81",
+    "_type": "dashboard",
+    "_source": {
+      "title": "Flats — Stockholm",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"embeddableConfig\":{\"mapCenter\":[59.32997225133093,18.093646452762187],\"mapZoom\":11},\"gridData\":{\"x\":0,\"y\":0,\"w\":48,\"h\":14,\"i\":\"1\"},\"id\":\"79f129b0-005c-11e9-989e-3d7019dbae0d\",\"panelIndex\":\"1\",\"type\":\"visualization\",\"version\":\"6.5.1\"},{\"embeddableConfig\":{},\"gridData\":{\"x\":17,\"y\":14,\"w\":16,\"h\":15,\"i\":\"2\"},\"id\":\"abf23ff0-00c8-11e9-b21a-292c14b5ac81\",\"panelIndex\":\"2\",\"type\":\"visualization\",\"version\":\"6.5.1\"},{\"embeddableConfig\":{},\"gridData\":{\"x\":0,\"y\":14,\"w\":17,\"h\":15,\"i\":\"3\"},\"id\":\"ede72b00-00c8-11e9-b21a-292c14b5ac81\",\"panelIndex\":\"3\",\"type\":\"visualization\",\"version\":\"6.5.1\"},{\"gridData\":{\"x\":33,\"y\":14,\"w\":15,\"h\":15,\"i\":\"4\"},\"version\":\"6.5.1\",\"panelIndex\":\"4\",\"type\":\"visualization\",\"id\":\"01ce7720-00cb-11e9-b21a-292c14b5ac81\",\"embeddableConfig\":{}}]",
+      "optionsJSON": "{\"darkTheme\":false,\"hidePanelTitles\":false,\"useMargins\":true}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[{\"$state\":{\"store\":\"appState\"},\"geo_bounding_box\":{\"ignore_unmapped\":true,\"location\":{\"bottom_right\":{\"lat\":59.23063067874175,\"lon\":18.380126953125004},\"top_left\":{\"lat\":59.43376346345741,\"lon\":17.756652832031254}}},\"meta\":{\"alias\":\"Stockholm\",\"disabled\":false,\"index\":\"dbb06520-fbd0-11e8-ad88-c1e6ef37fae7\",\"key\":\"location\",\"negate\":false,\"params\":{\"bottom_right\":{\"lat\":59.23063067874175,\"lon\":18.380126953125004},\"top_left\":{\"lat\":59.43376346345741,\"lon\":17.756652832031254}},\"type\":\"geo_bounding_box\",\"value\":\"{\\n  \\\"lat\\\": 59.43376346345741,\\n  \\\"lon\\\": 17.756652832031254\\n} to {\\n  \\\"lat\\\": 59.23063067874175,\\n  \\\"lon\\\": 18.380126953125004\\n}\"}}]}"
+      }
+    }
+  },
+  {
+    "_id": "dcb39af0-00cb-11e9-b21a-292c14b5ac81",
+    "_type": "dashboard",
+    "_source": {
+      "title": "Flats — Copenhagen",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"embeddableConfig\":{\"mapCenter\":[55.67913303850629,12.62054443359375],\"mapZoom\":10},\"gridData\":{\"x\":0,\"y\":0,\"w\":48,\"h\":14,\"i\":\"1\"},\"id\":\"79f129b0-005c-11e9-989e-3d7019dbae0d\",\"panelIndex\":\"1\",\"type\":\"visualization\",\"version\":\"6.5.1\"},{\"embeddableConfig\":{},\"gridData\":{\"x\":17,\"y\":14,\"w\":16,\"h\":15,\"i\":\"2\"},\"id\":\"abf23ff0-00c8-11e9-b21a-292c14b5ac81\",\"panelIndex\":\"2\",\"type\":\"visualization\",\"version\":\"6.5.1\"},{\"embeddableConfig\":{},\"gridData\":{\"x\":0,\"y\":14,\"w\":17,\"h\":15,\"i\":\"3\"},\"id\":\"ede72b00-00c8-11e9-b21a-292c14b5ac81\",\"panelIndex\":\"3\",\"type\":\"visualization\",\"version\":\"6.5.1\"},{\"gridData\":{\"x\":33,\"y\":14,\"w\":15,\"h\":15,\"i\":\"4\"},\"version\":\"6.5.1\",\"panelIndex\":\"4\",\"type\":\"visualization\",\"id\":\"01ce7720-00cb-11e9-b21a-292c14b5ac81\",\"embeddableConfig\":{}}]",
+      "optionsJSON": "{\"darkTheme\":false,\"hidePanelTitles\":false,\"useMargins\":true}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[{\"geo_bounding_box\":{\"ignore_unmapped\":true,\"location\":{\"bottom_right\":{\"lat\":55.59534178899883,\"lon\":12.685089111328127},\"top_left\":{\"lat\":55.72393922319863,\"lon\":12.442016601562502}}},\"meta\":{\"negate\":false,\"index\":\"dbb06520-fbd0-11e8-ad88-c1e6ef37fae7\",\"disabled\":false,\"alias\":\"Copenhagen\",\"type\":\"geo_bounding_box\",\"key\":\"location\",\"value\":\"{\\n  \\\"lat\\\": 55.72393922319863,\\n  \\\"lon\\\": 12.442016601562502\\n} to {\\n  \\\"lat\\\": 55.59534178899883,\\n  \\\"lon\\\": 12.685089111328127\\n}\",\"params\":{\"bottom_right\":{\"lat\":55.59534178899883,\"lon\":12.685089111328127},\"top_left\":{\"lat\":55.72393922319863,\"lon\":12.442016601562502}}},\"$state\":{\"store\":\"appState\"}}]}"
+      }
+    }
+  }
+]
