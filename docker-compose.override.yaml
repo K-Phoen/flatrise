@@ -3,7 +3,7 @@ version: '3'
 services:
   logstash:
     volumes:
-      - ./logstash:/usr/share/logstash/pipeline/
+      - ./logstash/offers-pipeline.conf:/usr/share/logstash/pipeline/offers-pipeline.conf
 
   leboncoin:
     volumes:
