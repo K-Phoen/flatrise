@@ -1,9 +1,20 @@
-FROM python:3.7.1-slim
+# build stage
+FROM golang:1.11-alpine3.8 as build-env
 
-WORKDIR /usr/src/app
+COPY ./blocket.se /build
 
-RUN pip install 'pika==0.12.0'
-RUN pip install 'beautifulsoup4==4.6.3'
+RUN apk add --no-cache git gcc musl-dev
 
-COPY ./docker /usr/src/app/docker/
-COPY ./blocket.se /usr/src/app/blocket.se/
+RUN cd /build && go build -v -o worker
+
+# final stage
+FROM alpine:3.8
+
+WORKDIR /app
+
+RUN apk add --no-cache bash ca-certificates
+COPY ./docker/ /docker
+
+COPY --from=build-env /build/worker /app/
+
+CMD ["/app/worker"]

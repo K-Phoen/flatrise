@@ -99,7 +99,7 @@ services:
       - rabbitmq
     environment:
       - RABBITMQ_URL=amqp://admin:admin@rabbitmq/flatrise
-    command: './docker/wait-for-it.sh -t 60 rabbitmq:5672 -- ./blocket.se/worker.py'
+    command: '/docker/wait-for-it.sh -t 60 rabbitmq:5672 -- /app/worker'
 
   scheduler:
     image: kphoen/flatrise-scheduler
@@ -117,10 +117,18 @@ services:
     build:
       context: .
       dockerfile: ./metricbeat/Dockerfile
+    command: metricbeat -e -system.hostfs=/hostfs
+    volumes:
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - elasticsearch
       - rabbitmq
       - logstash
+    deploy:
+      mode: global
 
 volumes:
   es_data:
