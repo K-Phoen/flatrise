@@ -87,6 +87,19 @@ resource "aws_instance" "small_worker" {
       "sudo docker swarm join --token ${data.external.swarm_token.result.token} ${aws_instance.manager.private_ip}:2377",
     ]
   }
+
+  provisioner "remote-exec" {
+    when = "destroy"
+
+    inline = [
+      "sudo docker swarm leave",
+    ]
+
+    connection {
+      user = "ubuntu"
+      host = "${self.public_ip}"
+    }
+  }
 }
 
 resource "aws_instance" "micro_worker" {
@@ -122,5 +135,18 @@ resource "aws_instance" "micro_worker" {
       "echo 'Swarm manager private IP: ${aws_instance.manager.private_ip}'",
       "sudo docker swarm join --token ${data.external.swarm_token.result.token} ${aws_instance.manager.private_ip}:2377",
     ]
+  }
+
+  provisioner "remote-exec" {
+    when = "destroy"
+
+    inline = [
+      "sudo docker swarm leave",
+    ]
+
+    connection {
+      user = "ubuntu"
+      host = "${self.public_ip}"
+    }
   }
 }
