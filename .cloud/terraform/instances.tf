@@ -103,7 +103,7 @@ resource "aws_instance" "small_worker" {
 }
 
 resource "aws_instance" "micro_worker" {
-  count = 3
+  count = 2
 
   ami           = "ami-08182c55a1c188dee"
   instance_type = "t2.micro"
