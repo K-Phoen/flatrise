@@ -1,10 +1,13 @@
-logging.level: debug
+logging.level: info
 
 output.elasticsearch:
   hosts: ['http://elasticsearch:9200']
   index: 'metricbeat-%{+yyyy.MM.dd}'
 
-setup.kibana.host: 'http://kibana:5601'
+setup.kibana.host: "kibana:5601"
+setup.kibana.protocol: "http"
+setup.kibana.path: /kibana
+
 setup.dashboards.enabled: true
 setup.dashboards.retry.enabled: true
 setup.dashboards.retry.maximum: 10

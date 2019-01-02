@@ -1,6 +1,21 @@
 version: '3'
 
 services:
+  nginx:
+    image: kphoen/flatrise-nginx
+    build:
+      context: ./nginx
+      dockerfile: ./Dockerfile
+    environment:
+      - USER=test
+      - PASSWD=changeme
+    depends_on:
+      - kibana
+    ports:
+      - 80:80
+    deploy:
+      replicas: 1
+
   elasticsearch:
     image: 'elasticsearch:6.5.1'
     environment:
@@ -43,9 +58,12 @@ services:
           memory: 700M
 
   kibana:
-    image: 'kibana:6.5.1'
-    ports:
-      - 80:5601
+    image: kphoen/flatrise-kibana
+    build:
+      context: ./kibana
+      dockerfile: ./Dockerfile
+    depends_on:
+      - elasticsearch
     deploy:
       replicas: 1
       resources:
@@ -127,6 +145,7 @@ services:
       - elasticsearch
       - rabbitmq
       - logstash
+      - kibana
     deploy:
       mode: global
 

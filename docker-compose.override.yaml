@@ -1,6 +1,15 @@
 version: '3'
 
 services:
+  nginx:
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/entrypoint.sh:/usr/local/bin/entrypoint.sh
+
+  kibana:
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+
   logstash:
     volumes:
       - ./logstash/offers-pipeline.conf:/usr/share/logstash/pipeline/offers-pipeline.conf
@@ -15,6 +24,7 @@ services:
 
   metricbeat:
     volumes:
+      - ./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml
       - ./metricbeat/modules.d:/usr/share/metricbeat/modules.d
 
 volumes:
