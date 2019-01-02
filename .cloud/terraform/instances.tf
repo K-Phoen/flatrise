@@ -14,6 +14,10 @@ resource "aws_instance" "manager" {
     Name = "swarm-manager"
   }
 
+  root_block_device {
+    volume_size = 30
+  }
+
   connection {
     user = "ubuntu"
   }
@@ -110,6 +114,10 @@ resource "aws_instance" "micro_worker" {
 
   tags = {
     Name = "swarm-micro-worker-${count.index}"
+  }
+
+  root_block_device {
+    volume_size = 30
   }
 
   connection {
