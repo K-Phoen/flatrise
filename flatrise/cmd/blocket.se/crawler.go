@@ -11,28 +11,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/K-Phoen/flatrise/flatrise/model"
 	"github.com/PuerkitoBio/goquery"
 )
 
 // divide a SEK amount by this rate to get the price in euros
 const SEKToEuroRate = 10.2704
-
-type Location struct {
-	Lat float64 `json:"lat"`
-	Lon float64 `json:"lon"`
-}
-
-type Offer struct {
-	Identifier  string   `json:"identifier"`
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	Price       int      `json:"price"`
-	Currency    string   `json:"currency"`
-	PriceEur    int      `json:"price_eur"`
-	Area        int      `json:"area"`
-	Rooms       int      `json:"rooms"`
-	Location    Location `json:"location"`
-}
 
 func stringToFloat(input string) float64 {
 	f, err := strconv.ParseFloat(input, 64)
@@ -75,38 +59,38 @@ func httpGet(url string) (io.Reader, error) {
 	return response.Body, nil
 }
 
-func extractLocation(identifier string) Location {
+func extractLocation(identifier string) model.Location {
 	source, err := httpGet(identifier)
 	if err != nil {
-		return Location{}
+		return model.Location{}
 	}
 
 	doc, err := goquery.NewDocumentFromReader(source)
 	if err != nil {
-		return Location{}
+		return model.Location{}
 	}
 
 	mapLinks := doc.Find("*[id=hitta-map-broker]")
 
 	if mapLinks.Length() == 0 {
-		return Location{}
+		return model.Location{}
 	}
 
 	src, _ := mapLinks.First().Attr("src")
 	data := strings.Split(strings.Split(strings.Split(src, "/")[7], "?")[0], ":")
 
-	return Location{
+	return model.Location{
 		Lat: stringToFloat(data[0]),
 		Lon: stringToFloat(data[1]),
 	}
 }
 
-func buildOffer(offerData map[string]interface{}) Offer {
+func buildOffer(offerData map[string]interface{}) model.Offer {
 	identifier := fmt.Sprintf("https://www.blocket.se/stockholm/seo-friendly-slug_%s.htm", offerData["id"].(string))
 
 	price := stringToInt(offerData["monthly_rent"].(string))
 
-	return Offer{
+	return model.Offer{
 		Identifier:  identifier,
 		Title:       offerData["address"].(string),
 		Description: "",
@@ -119,7 +103,7 @@ func buildOffer(offerData map[string]interface{}) Offer {
 	}
 }
 
-func Crawl() (offersChan chan Offer, err error) {
+func Crawl() (offersChan chan model.Offer, err error) {
 	url := "https://www.blocket.se/karta/items?ca=11&ca=11&st=s&cg=3020&sort=&ps=&pe=&ss=&se=&ros=&roe=&mre=&q=&is=1&f=b&w=3&ac=0MNXXY7CTORXWG23IN5WG2000&zl=12&ne=59.39389826993069%2C18.441925048828125&sw=59.2802650449542%2C17.865142822265625"
 
 	response, err := httpGet(url)
@@ -137,7 +121,7 @@ func Crawl() (offersChan chan Offer, err error) {
 
 	listItems := payload["list_items"].([]interface{})
 
-	offersChan = make(chan Offer, len(listItems))
+	offersChan = make(chan model.Offer, len(listItems))
 	var wg sync.WaitGroup
 
 	go func() {

@@ -1,11 +1,11 @@
 # build stage
 FROM golang:1.11-alpine3.8 as build-env
 
-COPY ./blocket.se /build
+COPY ./flatrise /build
 
 RUN apk add --no-cache git gcc musl-dev
 
-RUN cd /build && go build -v -o worker
+RUN cd /build/cmd/blocket.se && go build -v -o worker
 
 # final stage
 FROM alpine:3.8
@@ -13,8 +13,8 @@ FROM alpine:3.8
 WORKDIR /app
 
 RUN apk add --no-cache bash ca-certificates
-COPY ./docker/ /docker
+COPY ./docker/wait-for-it.sh /docker/
 
-COPY --from=build-env /build/worker /app/
+COPY --from=build-env /build/cmd/blocket.se/worker /app/
 
 CMD ["/app/worker"]

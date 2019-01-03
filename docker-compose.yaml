@@ -90,7 +90,7 @@ services:
     image: kphoen/flatrise-boligportal
     build:
       context: .
-      dockerfile: ./boligportal.dk/Dockerfile
+      dockerfile: ./docker/Dockerfile-boligportal
     depends_on:
       - rabbitmq
     environment:
@@ -112,7 +112,7 @@ services:
     image: kphoen/flatrise-blocket
     build:
       context: .
-      dockerfile: ./blocket.se/Dockerfile
+      dockerfile: ./docker/Dockerfile-blocket
     depends_on:
       - rabbitmq
     environment:
