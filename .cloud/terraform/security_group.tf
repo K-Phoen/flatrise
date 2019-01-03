@@ -3,18 +3,10 @@ resource "aws_security_group" "swarm" {
   name = "swarm-group"
   description = "Default security group that allows inbound and outbound traffic from all instances in the VPC"
 
-  # FIXME docker registry access from anywhere
+  # web access
   ingress {
-    from_port   = 5000
-    to_port     = 5000
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # FIXME swarm visualizer access from anywhere
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
