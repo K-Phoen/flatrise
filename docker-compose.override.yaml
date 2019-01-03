@@ -6,6 +6,10 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/entrypoint.sh:/usr/local/bin/entrypoint.sh
 
+  rabbitmq:
+    ports:
+      - 15672:15672
+
   kibana:
     volumes:
       - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml

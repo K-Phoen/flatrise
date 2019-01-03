@@ -1,0 +1,20 @@
+# build stage
+FROM golang:1.11-alpine3.8 as build-env
+
+RUN apk add --no-cache git gcc musl-dev
+
+COPY ./flatrise /build
+
+RUN cd /build/cmd/scheduler && go build -v -o scheduler
+
+# final stage
+FROM alpine:3.8
+
+WORKDIR /app
+
+RUN apk add --no-cache bash ca-certificates
+COPY ./docker/wait-for-it.sh /docker/
+
+COPY --from=build-env /build/cmd/scheduler/scheduler /app/
+
+CMD ["/app/scheduler"]

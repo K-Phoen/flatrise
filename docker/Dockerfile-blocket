@@ -1,9 +1,9 @@
 # build stage
 FROM golang:1.11-alpine3.8 as build-env
 
-COPY ./flatrise /build
-
 RUN apk add --no-cache git gcc musl-dev
+
+COPY ./flatrise /build
 
 RUN cd /build/cmd/blocket.se && go build -v -o worker
 
