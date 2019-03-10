@@ -56,13 +56,15 @@ func main() {
 	}
 	defer channel.Close()
 
-	emitter := newEmitter(channel)
-	worker, err := worker.NewRabbitMqWorker(channel, BlocketSearchsQueue, crawlOffers, emitter)
+	w, err := worker.NewRabbitMqWorker(channel, BlocketSearchsQueue, crawlOffers, newEmitter(channel))
 	if err != nil {
 		log.Fatalf("Could not create RabbitMq worker: %s", err)
 	}
 
 	log.Printf("Waiting for search requests. To exit press CTRL+C")
 
-	worker.Run()
+	err = w.Run()
+	if err != nil {
+		log.Fatalf("Could run worker: %s", err)
+	}
 }

@@ -1,10 +1,9 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/pkg/errors"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -48,7 +47,54 @@ func stringToInt(input string) int {
 	return i
 }
 
-func httpGet(url string) (io.Reader, error) {
+// ex: 1,5 rum
+func extractRooms(input string) int {
+	if len(input) == 0 {
+		return 0
+	}
+
+	cleanInput := input
+
+	if index := strings.Index(input, " "); index != -1 {
+		cleanInput = input[:index]
+	}
+
+	return stringToInt(cleanInput)
+}
+
+// ex: 15 000 kr/mån
+func extractRent(input string) int {
+	if len(input) == 0 {
+		return 0
+	}
+
+	cleanInput := input
+
+	if index := strings.Index(input, "kr"); index != -1 {
+		cleanInput = input[:index]
+	}
+
+	cleanInput = strings.Replace(cleanInput, " ", "", -1)
+
+	return stringToInt(cleanInput)
+}
+
+// ex: 35 m²
+func extractArea(input string) int {
+	if len(input) == 0 {
+		return 0
+	}
+
+	cleanInput := input
+
+	if index := strings.Index(input, " "); index != -1 {
+		cleanInput = input[:index]
+	}
+
+	return stringToInt(cleanInput)
+}
+
+func httpGet(url string) (io.ReadCloser, error) {
 	var httpClient = &http.Client{Timeout: 10 * time.Second}
 
 	response, err := httpClient.Get(url)
@@ -85,55 +131,57 @@ func extractLocation(identifier string) model.Location {
 	}
 }
 
-func buildOffer(offerData map[string]interface{}) model.Offer {
-	identifier := fmt.Sprintf("https://www.blocket.se/stockholm/seo-friendly-slug_%s.htm", offerData["id"].(string))
+func buildOffer(s *goquery.Selection) model.Offer {
+	linkSelector := s.Find(".item_link")
+	roomsSelector := s.Find(".rooms")
+	rentSelector := s.Find(".monthly_rent")
+	areaSelector := s.Find(".size")
 
-	price := stringToInt(offerData["monthly_rent"].(string))
+	identifier, _ := linkSelector.Attr("href")
+	rent := extractRent(strings.Trim(rentSelector.Text(), " \t\n"))
 
 	return model.Offer{
 		Identifier:  identifier,
-		Title:       offerData["address"].(string),
+		Title:       strings.Trim(linkSelector.Text(), " \t\n"),
 		Description: "",
-		Price:       price,
+		Price:       rent,
 		Currency:    "SEK",
-		PriceEur:    int(float64(price) / SEKToEuroRate),
-		Area:        stringToInt(offerData["sqm"].(string)),
-		Rooms:       stringToInt(offerData["rooms"].(string)),
+		PriceEur:    int(float64(rent) / SEKToEuroRate),
+		Area:        extractArea(strings.Trim(areaSelector.Text(), " \t\n")),
+		Rooms:       extractRooms(strings.Trim(roomsSelector.Text(), " \t\n")),
 		Location:    extractLocation(identifier),
 	}
 }
 
-func Crawl() (offersChan chan model.Offer, err error) {
-	url := "https://www.blocket.se/karta/items?ca=11&ca=11&st=s&cg=3020&sort=&ps=&pe=&ss=&se=&ros=&roe=&mre=&q=&is=1&f=b&w=3&ac=0MNXXY7CTORXWG23IN5WG2000&zl=12&ne=59.39389826993069%2C18.441925048828125&sw=59.2802650449542%2C17.865142822265625"
+func Crawl() (chan model.Offer, error) {
+	url := "https://www.blocket.se/bostad/uthyres/stockholm?cg_multi=3020&sort=&ss=&se=&ros=&roe=&bs=&be=&mre=&q=&q=&q=&is=1&save_search=1&l=0&md=th&f=p&f=c&f=b"
 
 	response, err := httpGet(url)
 	if err != nil {
-		return offersChan, err
+		return nil, errors.Wrap(err, "could not fetch remote offers listing")
 	}
+	defer response.Close()
 
-	jsonPayload, _ := ioutil.ReadAll(response)
+	doc, err := goquery.NewDocumentFromReader(response)
 	if err != nil {
-		return offersChan, err
+		return nil, errors.Wrap(err, "could not parse remote offers listing")
 	}
 
-	var payload map[string]interface{}
-	json.Unmarshal(jsonPayload, &payload)
+	offersSelector := doc.Find(".item_row")
+	offersChan := make(chan model.Offer, offersSelector.Length())
 
-	listItems := payload["list_items"].([]interface{})
-
-	offersChan = make(chan model.Offer, len(listItems))
 	var wg sync.WaitGroup
 
 	go func() {
-		for _, item := range listItems {
+		offersSelector.Each(func(i int, s *goquery.Selection) {
 			wg.Add(1)
 
-			go func(offerData map[string]interface{}) {
-				offersChan <- buildOffer(offerData)
+			go func(selection *goquery.Selection) {
+				offersChan <- buildOffer(selection)
 
 				wg.Done()
-			}(item.(map[string]interface{}))
-		}
+			}(s)
+		})
 
 		wg.Wait()
 
