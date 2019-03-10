@@ -1,4 +1,4 @@
-FROM docker.elastic.co/beats/metricbeat:6.5.2
+FROM docker.elastic.co/beats/metricbeat:6.6.1
 
 USER root
 

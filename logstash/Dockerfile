@@ -1,4 +1,4 @@
-FROM logstash:6.5.1
+FROM logstash:6.6.1
 
 RUN rm -rf /usr/share/logstash/pipeline/
 
