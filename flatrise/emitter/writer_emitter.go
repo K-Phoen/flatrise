@@ -11,7 +11,7 @@ type writerEmitter struct {
 	writer io.Writer
 }
 
-func NewWriterEmitter(writer io.Writer) writerEmitter {
+func NewWriterEmitter(writer io.Writer) Emitter {
 	return writerEmitter{
 		writer: writer,
 	}

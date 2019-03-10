@@ -51,7 +51,7 @@ func (emitter amqpEmitter) Emit(offer model.Offer) error {
 		},
 	)
 	if err != nil {
-		errors.Wrap(err, "Could not publish offer")
+		return errors.Wrap(err, "Could not publish offer")
 	}
 
 	return nil

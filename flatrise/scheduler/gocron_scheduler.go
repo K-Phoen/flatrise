@@ -11,7 +11,7 @@ type goCronScheduler struct {
 	queues      map[string]string
 }
 
-func NewGoCronScheduler(rabbitMqUrl string, queues map[string]string) goCronScheduler {
+func NewGoCronScheduler(rabbitMqUrl string, queues map[string]string) Scheduler {
 	return goCronScheduler{
 		rabbitMqUrl: rabbitMqUrl,
 		queues:      queues,
@@ -75,7 +75,7 @@ func (s goCronScheduler) withRabbitMq(do func(*amqp.Channel) error) error {
 
 	channel, err := conn.Channel()
 	if err != nil {
-		errors.Wrap(err, "Could not open a RabbitMq channel")
+		return errors.Wrap(err, "Could not open a RabbitMq channel")
 	}
 	defer channel.Close()
 
